@@ -9,6 +9,8 @@
 - Hermes real: adapter HTTP/CLI explícito; não inventa API remota
 - FBR Ads: provider configurável; endpoints externos ainda dependem de contrato documentado
 - publicação, gasto e ativação de anúncios: bloqueados por design
+- Secret Manager: referência/manifest implementado após readback do Control Tower; provider local não cria valores
+- Easypanel: adapter fail-closed sem contrato oficial documentado; nenhuma API presumida é chamada
 
 ## Evidência desta fatia
 

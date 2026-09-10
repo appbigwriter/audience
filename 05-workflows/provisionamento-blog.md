@@ -281,3 +281,7 @@ Gestor validado
 ```
 
 Sem namespace, injeção e health check confirmados, o blog permanece bloqueado e não pode publicar, executar integração privada ou ser marcado como pronto
+
+## Estado da implementação
+
+A camada de referência foi implementada no FBR Blogs: namespace determinístico `fbr/blogs/<project_id>/`, `secret_refs`, receipt e `.env.example` seguro. O provider local é reference-only e não cria valores. O adapter Easypanel falha fechado sem contrato oficial documentado e não chama endpoints presumidos. A validação de injeção real e a mutação no Easypanel permanecem pendentes

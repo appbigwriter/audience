@@ -24,9 +24,9 @@ Crie um documento .env.exemple com as variaveis que vai precisar que o usuario i
 ```env
 NEXT_PUBLIC_APP_NAME=FBR Blogs
 SUPABASE_URL=https://supabase-control-tower-api.fbr.news
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3ODkwMDI4NzAsImV4cCI6MjEwNDM2Mjg3MH0.O8OuvwNYZalxBJtkgD2OjXW0Xosa67F-WaxIl084fNg
+SUPABASE_SERVICE_ROLE_KEY=<secret-manager:fbr/blogs/<PROJECT_ID>/SUPABASE_SERVICE_ROLE_KEY>
 NEXT_PUBLIC_SUPABASE_URL=https://supabase-control-tower-api.fbr.news
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg5MDAyODcwLCJleHAiOjIxMDQzNjI4NzB9.za9fjZqGiS2QnllsIHEHO4vFNfNmBLbEhdsCAT_Lb5M
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<secret-manager:fbr/blogs/<PROJECT_ID>/NEXT_PUBLIC_SUPABASE_ANON_KEY>
 ```
 
 ## 4. Regras de integracao

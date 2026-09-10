@@ -1,4 +1,6 @@
-export type BlogInput = { name: string; slug: string; niche: string; language: string; voice: string; domain?: string | null }
+export type BlogInput = { name: string; slug: string; niche: string; language: string; voice: string; domain?: string | null; secretVariableNames?: string[] }
+import { BlogProvisioningSecrets, DEFAULT_BLOG_SECRET_VARIABLES } from './secrets/blog-provisioning-secrets'
+import { ReferenceOnlySecretManager, type SecretManager, type SecretEnvironment } from './secrets/secret-manager'
 export type JobKind = 'niche' | 'affiliate_radar'
 export type JobStatus = 'draft' | 'blocked'
 export type DailyJob = { id: string; blogId: string; kind: JobKind; status: JobStatus; title: string; bullets: string[]; wordCount: number; ads: { affiliate: string | null; product: string | null }; disclosure: string; keywords: string[]; sources: string[] }
@@ -15,7 +17,8 @@ export class MockFbrAds implements FbrAdsAdapter { validateCreative(w: number, h
 export class MockImageProvider implements ImageProviderAdapter { source(q: string) { return { url: `mock://image/${encodeURIComponent(q)}`, license: 'local-only' } } }
 
 export class BlogService {
-  constructor(private readonly repo: BlogRepository, private readonly hermes: HermesAdapter, private readonly tower: ControlTowerAdapter) {}
+  private readonly secrets: BlogProvisioningSecrets
+  constructor(private readonly repo: BlogRepository, private readonly hermes: HermesAdapter, private readonly tower: ControlTowerAdapter, secretManager: SecretManager = new ReferenceOnlySecretManager(), private readonly environment: SecretEnvironment = 'development') { this.secrets = new BlogProvisioningSecrets(secretManager) }
   async createBlog(input: BlogInput) {
     if (!/^[a-z0-9_]+$/.test(input.slug)) throw new Error('invalid slug')
     if (await this.repo.hasBlog(input.slug)) throw new Error('duplicate slug')
@@ -24,9 +27,10 @@ export class BlogService {
     await this.repo.saveAgent(id, manager.profileId, manager.validated ? 'validated' : 'blocked')
     if (!manager.validated || !(await this.hermes.healthCheck(manager.profileId))) throw new Error('manager must be validated')
     const project = await this.tower.provision({ name: input.name, slug: input.slug, businessType: 'custom', templateKey: 'custom_base', domain: input.domain ?? null, language: input.language })
+    const secretPackage = await this.secrets.provision({ projectId: project.projectId, schemaName: project.schemaName, environment: this.environment, variableNames: input.secretVariableNames ? [...input.secretVariableNames] : [...DEFAULT_BLOG_SECRET_VARIABLES], templateKey: 'custom_base' })
     const handoffs = ['developer-doc', 'frontend-adsense-handoff', 'bigwriter-handoff']
     for (const handoff of handoffs) await this.repo.saveHandoff(id, handoff, project.handoffs?.[handoff] ? `control-tower:${handoff}` : `local-receipt:${crypto.randomUUID()}`)
-    return { blogId: id, managerProfileId: manager.profileId, managerStatus: 'validated', projectId: project.projectId, schemaName: project.schemaName, templateKey: 'custom_base', status: project.status, handoffs }
+    return { blogId: id, managerProfileId: manager.profileId, managerStatus: 'validated', projectId: project.projectId, schemaName: project.schemaName, templateKey: 'custom_base', namespace: secretPackage.namespace.namespace, secretRefs: secretPackage.secretRefs, developerDoc: secretPackage.developerDoc, status: project.status, handoffs }
   }
   async dailyRun(blogId: string) {
     if (!(await this.repo.getBlog(blogId))) throw new Error('blog not found')

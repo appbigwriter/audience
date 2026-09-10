@@ -23,11 +23,11 @@ Crie um documento .env.example com as variáveis que vai precisar que o usuário
 # Blog runtime environment
 NEXT_PUBLIC_APP_NAME=FBR Blogs
 SUPABASE_URL=https://supabase-control-tower-api.fbr.news
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3ODkwMDI4NzAsImV4cCI6MjEwNDM2Mjg3MH0.O8OuvwNYZalxBJtkgD2OjXW0Xosa67F-WaxIl084fNg
+SUPABASE_SERVICE_ROLE_KEY=<secret-manager:fbr/blogs/<PROJECT_ID>/SUPABASE_SERVICE_ROLE_KEY>
 
 # Optional, only if the front uses public reads directly
 NEXT_PUBLIC_SUPABASE_URL=https://supabase-control-tower-api.fbr.news
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg5MDAyODcwLCJleHAiOjIxMDQzNjI4NzB9.za9fjZqGiS2QnllsIHEHO4vFNfNmBLbEhdsCAT_Lb5M
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<secret-manager:fbr/blogs/<PROJECT_ID>/NEXT_PUBLIC_SUPABASE_ANON_KEY>
 ```
 
 ## 4. Regras importantes
@@ -111,3 +111,16 @@ select id, name, slug, business_type, template_key, schema_name, domain, status,
 from public.projects
 where slug = 'fbr_blogs';
 ```
+
+## 11. Entrega segura de runtime
+
+O pacote gerado pelo FBR Blogs inclui somente `project_id`, `schema_name`, `template_key`, `namespace` e `secret_refs`. Os valores são placeholders resolvidos pelo provider autorizado em runtime
+
+```env
+SECRETS_PROVIDER=reference
+SECRETS_NAMESPACE_PREFIX=fbr/blogs
+SUPABASE_SERVICE_ROLE_KEY=<secret-manager:fbr/blogs/<PROJECT_ID>/SUPABASE_SERVICE_ROLE_KEY>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<secret-manager:fbr/blogs/<PROJECT_ID>/NEXT_PUBLIC_SUPABASE_ANON_KEY>
+```
+
+A integração Easypanel permanece bloqueada até existir contrato oficial documentado; este repositório não chama endpoints presumidos

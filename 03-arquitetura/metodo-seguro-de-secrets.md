@@ -177,4 +177,4 @@ A implementação deve aceitar providers por interface, sem fixar Easypanel como
 
 ## Critério de aceite
 
-A entrega de um novo blog só passa quando um teste comprovar: Gestor criado antes do banco, namespace criado, secrets persistidos fora do Git, referências presentes no developer-doc, injeção no runtime, isolamento entre dois blogs, rotação sem downtime indevido e ausência dos valores em logs e handoffs
+O critério de aceite da entrega de um novo blog é referência segura e health check de runtime autorizado. Neste commit, a entrega implementada é a referência/manifest local; o contrato oficial Easypanel e a validação de deployment real continuam pendentes

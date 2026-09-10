@@ -1,0 +1,1 @@
+export default function Workflow(){return <main><h1>Workflow / Kora</h1><p>intake → gestor validado → Control Tower → handoffs → jobs → draft</p><p>Sem publicação automática. Evidências e gates ficam no domínio do projeto.</p></main>}

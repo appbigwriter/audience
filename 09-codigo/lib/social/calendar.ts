@@ -1,0 +1,1 @@
+export type Channel='instagram'|'youtube'|'email'|'tiktok'; export function scheduleSocial(channel:Channel,copy:string,date:string){if(!copy||!date)throw new Error('copy and date required');return {channel,copy,date,status:'planned',approval:'pending'}}

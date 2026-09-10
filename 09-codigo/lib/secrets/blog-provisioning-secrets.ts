@@ -27,6 +27,9 @@ export type BlogProvisioningSecretsReceipt = SecretReceipt & {
 export class BlogProvisioningSecrets {
   constructor(private readonly manager: SecretManager) {}
 
+  async rotate(namespace: SecretNamespace, variableName: string, authorization: import('./secret-manager').SecretOperatorAuthorization) { return this.manager.rotate(namespace, variableName, authorization) }
+  async revoke(namespace: SecretNamespace, variableName: string, authorization: import('./secret-manager').SecretOperatorAuthorization) { return this.manager.revoke(namespace, variableName, authorization) }
+
   async provision(input: BlogProvisioningSecretsInput): Promise<BlogProvisioningSecretsReceipt> {
     if (!input.projectId || !input.schemaName) throw new Error('Secret delivery requires project_id and schema_name from Control Tower readback')
     const namespace = await this.manager.createNamespace(input.projectId, input.schemaName, input.environment, input.variableNames ? [...input.variableNames] : [...DEFAULT_BLOG_SECRET_VARIABLES])
@@ -34,7 +37,9 @@ export class BlogProvisioningSecrets {
     for (const variableName of namespace.variableNames) secretRefs.push(await this.manager.recordReference(namespace, variableName))
     const validated = await this.manager.validateInjection(namespace, namespace.variableNames)
     const injectionStatus = validated ? 'validated' : (this.manager.constructor.name === 'EasypanelSecretManager' ? 'pending-injection' : 'reference-only')
-    const receipt = { provider: secretRefs[0]?.provider || 'reference-only', namespace, secretRefs, manifest: '', injectionStatus } as SecretReceipt
+    const publicManifest = { project_id: input.projectId, schema_name: input.schemaName, namespace: namespace.namespace, variables: namespace.variableNames.filter(name => name.startsWith('NEXT_PUBLIC_')) }
+    const runtimeManifest = { project_id: input.projectId, schema_name: input.schemaName, namespace: namespace.namespace, variables: namespace.variableNames.filter(name => !name.startsWith('NEXT_PUBLIC_')), secret_refs: secretRefs.map(ref => ref.secretRef) }
+    const receipt = { provider: secretRefs[0]?.provider || 'reference-only', namespace, secretRefs, manifest: '', publicManifest, runtimeManifest, injectionStatus } as SecretReceipt
     receipt.manifest = safeManifest(receipt)
     const envExample = namespace.variableNames.map(name => `${name}=<${secretRefs.find(ref => ref.variableName === name)?.secretRef || `secret-manager:${namespace.namespace}${name}`}>`).join('\n')
     const templateKey = input.templateKey || 'custom_base'
@@ -45,6 +50,8 @@ export class BlogProvisioningSecrets {
       `schema_name: ${input.schemaName}`,
       `template_key: ${templateKey}`,
       `namespace: ${namespace.namespace}`,
+      `public_manifest: ${JSON.stringify(publicManifest)}`,
+      `runtime_manifest: ${JSON.stringify(runtimeManifest)}`,
       `secret_refs: ${JSON.stringify(secretRefs.map(ref => ref.secretRef))}`,
       '',
       'Values are injected by the authorized runtime provider and are never stored in this document',

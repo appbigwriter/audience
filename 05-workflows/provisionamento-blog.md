@@ -270,15 +270,16 @@ A entrega de variáveis segue obrigatoriamente o método documentado em `03-arqu
 A ordem operacional é:
 
 ```text
-Gestor validado
-→ Control Tower confirma project_id e schema_name
-→ Secret Manager cria namespace do blog
-→ secrets são gravados ou vinculados com escopo mínimo
-→ developer-doc recebe apenas secret_refs e nomes de variáveis
-→ Théo valida injeção no runtime
-→ health check aprovado
-→ blog liberado para execução
+manager validated
+→ Control Tower project readback
+→ namespace
+→ binding
+→ runtime validation
+→ handoffs
+→ release
 ```
+
+A implementação usa o contrato oficial do Secret Manager Control Tower (`/secrets/namespaces`, `/secrets/bindings`, `/secrets/namespaces/{project_id}`, `/secrets/validate/{project_id}`, `/secrets/rotate`, `/secrets/revoke`) com headers autenticados e respostas somente de metadados/`secret_refs`. Não há valores nos payloads de binding, receipts ou handoffs. Rotação e revogação exigem contexto de operador autorizado e não são expostas por rotas públicas. Easypanel continua uma boundary explícita: sem contrato oficial, produção falha fechado e não há HTTP presumido
 
 Sem namespace, injeção e health check confirmados, o blog permanece bloqueado e não pode publicar, executar integração privada ou ser marcado como pronto
 

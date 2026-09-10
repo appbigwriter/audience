@@ -3,7 +3,7 @@ import { getRuntimeConfig, assertExternalIntegrationConfigured } from './config'
 import { createRepository } from './repository'
 import { ConfigurableHermesAdapter } from './hermes-adapter'
 import { SupabaseControlTowerAdapter } from './control-tower/real-client'
-import { EasypanelSecretManager, ReferenceOnlySecretManager } from './secrets/secret-manager'
+import { ControlTowerSecretManager, EasypanelSecretManager, ReferenceOnlySecretManager } from './secrets/secret-manager'
 
 const globalRuntime = globalThis as typeof globalThis & { __fbrBlogsRuntime?: { repository: ReturnType<typeof createRepository>; service: BlogService } }
 export function getBlogRuntime() {
@@ -13,9 +13,11 @@ export function getBlogRuntime() {
   const local = config.appEnv === 'local'
   const hermes = local ? new MockHermes(true) : new ConfigurableHermesAdapter({ apiUrl: config.hermesApiUrl, apiKey: config.hermesApiKey, createPath: config.hermesCreatePath, healthPathTemplate: config.hermesHealthPathTemplate, cliCommand: config.hermesCliCommand })
   const tower = local ? new MockControlTower() : new SupabaseControlTowerAdapter({ apiUrl: config.controlTowerApiUrl!, apiKey: config.controlTowerApiKey!, organizationSlug: config.controlTowerOrganizationSlug, handoffBaseUrl: config.controlTowerHandoffBaseUrl, handoffPathTemplate: config.controlTowerHandoffPathTemplate })
-  const secrets = config.secretsProvider === 'easypanel'
-    ? new EasypanelSecretManager({ apiUrl: config.easypanelApiUrl, apiToken: config.easypanelApiToken, namespacePrefix: config.secretsNamespacePrefix || 'fbr/blogs' })
-    : new ReferenceOnlySecretManager('reference-only', config.secretsNamespacePrefix || 'fbr/blogs')
+  const secrets = config.secretsProvider === 'control-tower'
+    ? new ControlTowerSecretManager({ baseUrl: config.controlTowerSecretsBaseUrl!, apiKey: config.controlTowerAgentApiKey!, callerService: config.fbrCallerService!, environment: (config.fbrEnvironment || config.appEnv) as 'development' | 'staging' | 'production', namespacePrefix: config.secretsNamespacePrefix })
+    : config.secretsProvider === 'easypanel'
+      ? new EasypanelSecretManager({ namespacePrefix: config.secretsNamespacePrefix, production: config.appEnv === 'production' })
+      : new ReferenceOnlySecretManager('reference-only', config.secretsNamespacePrefix || 'fbr/blogs')
   globalRuntime.__fbrBlogsRuntime = { repository, service: new BlogService(repository, hermes, tower, secrets, config.appEnv === 'production' ? 'production' : 'development') }
   return globalRuntime.__fbrBlogsRuntime
 }

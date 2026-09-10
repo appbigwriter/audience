@@ -32,6 +32,9 @@ export class BlogService {
     for (const handoff of handoffs) await this.repo.saveHandoff(id, handoff, project.handoffs?.[handoff] ? `control-tower:${handoff}` : `local-receipt:${crypto.randomUUID()}`)
     return { blogId: id, managerProfileId: manager.profileId, managerStatus: 'validated', projectId: project.projectId, schemaName: project.schemaName, templateKey: 'custom_base', namespace: secretPackage.namespace.namespace, secretRefs: secretPackage.secretRefs, developerDoc: secretPackage.developerDoc, status: project.status, handoffs }
   }
+  async rotateSecret(namespace: import('./secrets/secret-manager').SecretNamespace, variableName: string, authorization: import('./secrets/secret-manager').SecretOperatorAuthorization) { return this.secrets.rotate(namespace, variableName, authorization) }
+  async revokeSecret(namespace: import('./secrets/secret-manager').SecretNamespace, variableName: string, authorization: import('./secrets/secret-manager').SecretOperatorAuthorization) { return this.secrets.revoke(namespace, variableName, authorization) }
+
   async dailyRun(blogId: string) {
     if (!(await this.repo.getBlog(blogId))) throw new Error('blog not found')
     const kinds: JobKind[] = ['niche', 'niche', 'affiliate_radar']

@@ -175,6 +175,22 @@ EASYPANEL_API_TOKEN=<secret-manager>
 
 A implementação deve aceitar providers por interface, sem fixar Easypanel como dependência irreversível.
 
+## Contrato oficial Control Tower
+
+O Secret Manager usa `https://supabase-control-tower-api.fbr.news/api/control-tower` somente quando essa URL estiver configurada explicitamente. O cliente envia `Authorization: Bearer CONTROL_TOWER_AGENT_API_KEY`, `Content-Type`, `Accept`, `x-fbr-environment` e `x-fbr-caller-service`. As rotas são `POST /secrets/namespaces`, `POST /secrets/bindings`, `GET /secrets/namespaces/{project_id}`, `GET /secrets/validate/{project_id}`, `POST /secrets/rotate` e `POST /secrets/revoke`. As respostas contêm metadados e `secret_refs`, nunca valores; erros são sanitizados e auditados pelo Control Tower sem plaintext
+
+A ordem obrigatória é:
+
+```text
+manager validated → Control Tower project readback → namespace → binding → runtime validation → handoffs → release
+```
+
+O namespace é determinístico `fbr/blogs/<project_id>/`. Bindings aceitam somente nomes e `secret_refs`; nenhum método aceita valores de secrets. Rotação e revogação são métodos de serviço protegidos por contexto explícito de operador, nunca rotas públicas não autenticadas. Rotacione, valide o health check e só então revogue a referência anterior. A política é least privilege: cada serviço recebe somente as referências do próprio namespace e variáveis necessárias
+
+## Boundary Easypanel
+
+Easypanel é o provider de injeção em runtime, mas seu contrato/API não foi fornecido. O adapter expõe uma interface de provider e não faz chamadas HTTP presumidas. Em produção, `SECRETS_PROVIDER=easypanel` falha fechado com `Easypanel contract not configured`; o provider reference-only permanece disponível somente para local/development
+
 ## Critério de aceite
 
-O critério de aceite da entrega de um novo blog é referência segura e health check de runtime autorizado. Neste commit, a entrega implementada é a referência/manifest local; o contrato oficial Easypanel e a validação de deployment real continuam pendentes
+A integração do contrato Control Tower está implementada com testes fake, sem rede ou credenciais. A entrega não é declarada como produção completa: ainda faltam configurar o provider oficial de injeção Easypanel e executar um deployment real com health check autorizado

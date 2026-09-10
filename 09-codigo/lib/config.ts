@@ -4,6 +4,8 @@ export type RuntimeConfig = {
   appEnv: RuntimeMode
   localDataPath: string
   blogSchema: string
+  controlTowerProjectId?: string
+  controlTowerSchemaName?: string
   supabaseUrl?: string
   supabaseServiceRoleKey?: string
   controlTowerApiUrl?: string
@@ -31,7 +33,9 @@ export function getRuntimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeC
   return {
     appEnv,
     localDataPath: env.BLOG_LOCAL_DATA_PATH || '.data/fbr-blogs.json',
-    blogSchema: env.BLOG_SCHEMA || 'public',
+    controlTowerProjectId: env.CONTROL_TOWER_PROJECT_ID,
+    controlTowerSchemaName: env.CONTROL_TOWER_SCHEMA_NAME,
+    blogSchema: env.CONTROL_TOWER_SCHEMA_NAME || env.BLOG_SCHEMA || 'public',
     supabaseUrl: env.SUPABASE_URL,
     supabaseServiceRoleKey: env.SUPABASE_SERVICE_ROLE_KEY,
     controlTowerApiUrl: env.CONTROL_TOWER_API_URL,
@@ -53,6 +57,8 @@ export function getRuntimeConfig(env: NodeJS.ProcessEnv = process.env): RuntimeC
 
 export function assertExternalIntegrationConfigured(config: RuntimeConfig): void {
   if (config.appEnv !== 'production') return
+  if (!config.supabaseUrl || !config.supabaseServiceRoleKey) throw new Error('Production requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY')
+  if (!config.controlTowerProjectId || !config.controlTowerSchemaName) throw new Error('Production requires CONTROL_TOWER_PROJECT_ID and CONTROL_TOWER_SCHEMA_NAME')
   if (!config.controlTowerApiUrl || !config.controlTowerApiKey) throw new Error('Production requires CONTROL_TOWER_API_URL and CONTROL_TOWER_API_KEY')
   const hermesHttp = config.hermesApiUrl && config.hermesApiKey && config.hermesCreatePath && config.hermesHealthPathTemplate
   if (!hermesHttp && !config.hermesCliCommand) throw new Error('Production requires Hermes HTTP contract (URL, key and paths) or HERMES_CLI_COMMAND')

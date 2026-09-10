@@ -6,7 +6,7 @@ describe('production integration boundaries', () => {
   it('fails closed without production providers', () => {
     expect(() => getRuntimeConfig({ APP_ENV: 'production' } as unknown as NodeJS.ProcessEnv)).toThrow('SUPABASE')
     expect(() => createRepository({ appEnv: 'production', localDataPath: '.data/x' })).toThrow('local fallback is disabled')
-    expect(() => assertExternalIntegrationConfigured({ appEnv: 'production', localDataPath: '.data/x', blogSchema: 'custom_x', controlTowerOrganizationSlug: 'gestaodb' })).toThrow('CONTROL_TOWER')
+    expect(() => assertExternalIntegrationConfigured({ appEnv: 'production', localDataPath: '.data/x', blogSchema: 'custom_x', supabaseUrl: 'https://supabase.test', supabaseServiceRoleKey: 'test-key', controlTowerOrganizationSlug: 'gestaodb' })).toThrow('CONTROL_TOWER')
   })
 
   it('uses schema profiles, encoded filters and write Prefer headers', async () => {

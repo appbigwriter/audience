@@ -1,3 +1,3 @@
-import { BlogService, MockControlTower, MockHermes, MockRepository } from '@/lib'
-const repo=new MockRepository(); const service=new BlogService(repo,new MockHermes(true),new MockControlTower())
-export async function POST(request:Request){try{const body=await request.json();const receipt=await service.createBlog(body);const jobs=service.dailyRun(receipt.blogId);return Response.json({receipt,jobs},{status:201})}catch(e){return Response.json({error:e instanceof Error?e.message:'invalid request'},{status:400})}}
+import { NextResponse } from 'next/server'
+import { getBlogRuntime } from '@/lib/runtime'
+export async function POST(request: Request) { try { const { blogId } = await request.json(); const jobs = await getBlogRuntime().service.dailyRun(blogId); return NextResponse.json({ blogId, jobs, count: jobs.length }, { status: 201 }) } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : 'request failed' }, { status: 400 }) } }

@@ -14,7 +14,7 @@ describe('FBR Blogs vertical', () => {
   })
   it('creates exactly three daily jobs and draft-only articles', async () => {
     const repo = new MockRepository(); const service = new BlogService(repo, new MockHermes(true), new MockControlTower())
-    const blog = await service.createBlog({name:'Casa',slug:'casa',niche:'casa',language:'pt',voice:'claro'}); const jobs = service.dailyRun(blog.blogId)
+    const blog = await service.createBlog({name:'Casa',slug:'casa',niche:'casa',language:'pt',voice:'claro'}); const jobs = await service.dailyRun(blog.blogId)
     expect(jobs).toHaveLength(3); expect(jobs.filter(j=>j.kind==='niche')).toHaveLength(2); expect(jobs.filter(j=>j.kind==='affiliate_radar')).toHaveLength(1)
     expect(jobs.every(j=>j.status==='draft' && j.bullets.length>=4 && Math.abs(j.wordCount-1300)<=150)).toBe(true)
     expect(jobs.every(j=>j.ads.affiliate && j.ads.product && j.disclosure)).toBe(true)

@@ -1,3 +1,3 @@
-import { BlogService, MockControlTower, MockHermes, MockRepository } from '@/lib'
-const repo=new MockRepository(); const service=new BlogService(repo,new MockHermes(true),new MockControlTower())
-export async function POST(request:Request,{params}:{params:{slug:string}}){try{const blogId=[...repo.blogs.entries()].find(([,blog])=>blog.slug===params.slug)?.[0]; if(!blogId) throw new Error('blog not found'); const jobs=service.dailyRun(blogId);return Response.json(jobs)}catch(e){return Response.json({error:e instanceof Error?e.message:'not found'},{status:404})}}
+import { NextResponse } from 'next/server'
+import { getBlogRuntime } from '@/lib/runtime'
+export async function POST(request: Request, context: { params: { slug: string } }) { try { const runtime = getBlogRuntime(); const found = await runtime.repository.findBlogBySlug?.(context.params.slug); if (!found) return NextResponse.json({ error: 'blog not found' }, { status: 404 }); const jobs = await runtime.service.dailyRun(found.id); return NextResponse.json({ slug: context.params.slug, jobs }, { status: 201 }) } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : 'request failed' }, { status: 400 }) } }

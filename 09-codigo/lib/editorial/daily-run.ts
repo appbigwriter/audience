@@ -1,3 +1,4 @@
-import { BlogService, MockControlTower, MockHermes, MockRepository } from '../index'
-export const repository=new MockRepository(); export const blogService=new BlogService(repository,new MockHermes(true),new MockControlTower())
-export async function dailyRun(blogId:string){return blogService.dailyRun(blogId)}
+import { BlogService } from '../index'
+import { getBlogRuntime } from '../runtime'
+export function createDailyRunService(): BlogService { return getBlogRuntime().service }
+export async function dailyRun(blogId: string) { return createDailyRunService().dailyRun(blogId) }

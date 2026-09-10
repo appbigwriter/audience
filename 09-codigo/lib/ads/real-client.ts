@@ -1,7 +1,17 @@
 import type { FbrAdsAdapter } from '../index'
+
+type Fetcher = (input: string | URL | Request, init?: RequestInit) => Promise<Response>
 export class ConfigurableFbrAdsAdapter implements FbrAdsAdapter {
-  constructor(private readonly options: { apiUrl?: string; apiKey?: string; fetcher?: typeof fetch } = {}) {}
+  constructor(private readonly options: { apiUrl?: string; apiKey?: string; inventoryPath?: string; creativePath?: string; fetcher?: Fetcher } = {}) {}
   validateCreative(width: number, height: number) { return (width === 1250 && height === 150) || (width === 350 && height === 350) }
-  async inventory(_query: string): Promise<never> { if (!this.options.apiUrl || !this.options.apiKey) throw new Error('FBR Ads is not configured: set FBR_ADS_API_URL and FBR_ADS_API_KEY'); throw new Error('FBR Ads inventory endpoint is not configured; inject a provider contract instead of assuming paths') }
-  async selectCreative(_query: string): Promise<never> { if (!this.options.apiUrl || !this.options.apiKey) throw new Error('FBR Ads is not configured: set FBR_ADS_API_URL and FBR_ADS_API_KEY'); throw new Error('FBR Ads creative endpoint is not configured; inject a provider contract instead of assuming paths') }
+  private async call(path: string | undefined, query: string) {
+    if (!this.options.apiUrl || !this.options.apiKey) throw new Error('FBR Ads is not configured: set FBR_ADS_API_URL and FBR_ADS_API_KEY')
+    if (!path) throw new Error('FBR Ads contract is not configured: set the provider inventory/creative path')
+    const separator = path.includes('?') ? '&' : '?'
+    const response = await (this.options.fetcher || fetch)(`${this.options.apiUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}${separator}query=${encodeURIComponent(query)}`, { headers: { Authorization: `Bearer ${this.options.apiKey}` } })
+    if (!response.ok) throw new Error(`FBR Ads provider error (${response.status})`)
+    return response.json()
+  }
+  inventory(query: string) { return this.call(this.options.inventoryPath, query) }
+  selectCreative(query: string) { return this.call(this.options.creativePath, query) }
 }

@@ -23,3 +23,9 @@ npm run build
 ```
 
 Não há publicação, provisionamento real ou mutação de anúncios no smoke local
+
+## Deploy no Easypanel/VPS
+
+Defina as variáveis no secret manager do deploy, nunca em documentos versionados: `APP_ENV=production`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `BLOG_SCHEMA`, `CONTROL_TOWER_API_URL`, `CONTROL_TOWER_API_KEY`, `CONTROL_TOWER_ORGANIZATION_SLUG` e o contrato Hermes (HTTP com URL, chave e paths documentados ou `HERMES_CLI_COMMAND`). Configure `CONTROL_TOWER_HANDOFF_BASE_URL` e `CONTROL_TOWER_HANDOFF_PATH_TEMPLATE` somente quando o serviço de handoff tiver contrato próprio. FBR Ads só é ativado com URL, chave e paths fornecidos pelo provedor; o código não presume endpoints externos.
+
+Credenciais pertencem ao secret manager do Easypanel/VPS e nunca devem ser commitadas no git ou incluídas em handoffs

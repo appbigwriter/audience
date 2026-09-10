@@ -262,3 +262,22 @@ Kora cria 2 cards por blog/dia
 ## Regra de publicação
 
 A rotina diária termina no estado `draft`. Publicação, ativação de anúncios, alteração de verba e qualquer comunicação pública seguem os gates de Gabe e a aprovação humana de Sergio quando aplicável
+
+## Segurança de configuração por blog
+
+A entrega de variáveis segue obrigatoriamente o método documentado em `03-arquitetura/metodo-seguro-de-secrets.md`. O fluxo cria um namespace por `project_id`, registra apenas referências, injeta valores no runtime do Easypanel e nunca coloca secrets em chat, Git, skills, SOUL.md, handoffs ou logs.
+
+A ordem operacional é:
+
+```text
+Gestor validado
+→ Control Tower confirma project_id e schema_name
+→ Secret Manager cria namespace do blog
+→ secrets são gravados ou vinculados com escopo mínimo
+→ developer-doc recebe apenas secret_refs e nomes de variáveis
+→ Théo valida injeção no runtime
+→ health check aprovado
+→ blog liberado para execução
+```
+
+Sem namespace, injeção e health check confirmados, o blog permanece bloqueado e não pode publicar, executar integração privada ou ser marcado como pronto

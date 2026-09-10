@@ -1,7 +1,8 @@
 # STATUS — FBR Blogs
 
 - status: `production-readiness-slice`
-- fallback local: `explícito`, somente com `APP_ENV=local` ou `APP_ENV=development`
+- fallback local: `explícito`; mocks somente com `APP_ENV=local`; `development` usa persistência local, mas adapters reais e contratos configurados
+- produção: falha fechada sem Supabase, Control Tower e Hermes configurados
 - persistência: `JsonRepository` durável local ou `SupabaseRepository` via PostgREST
 - Gestor Editorial antes do Control Tower: validado por serviço e testes
 - Control Tower real: adapter implementado; depende de URL, chave, contrato e paths de handoff configurados

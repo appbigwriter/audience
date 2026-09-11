@@ -265,8 +265,7 @@ A rotina diária termina no estado `draft`. Publicação, ativação de anúncio
 
 ## Segurança de configuração por blog
 
-A entrega de variáveis segue obrigatoriamente o método documentado em `03-arquitetura/metodo-seguro-de-secrets.md`. O fluxo cria um namespace por `project_id`, registra apenas referências, injeta valores no runtime do Easypanel e nunca coloca secrets em chat, Git, skills, SOUL.md, handoffs ou logs.
-
+A entrega de variáveis segue obrigatoriamente o método documentado em `03-arquitetura/metodo-seguro-de-secrets.md`. As aprovações transversais seguem o ADR-0004 do FBR Agency Flux em `F:\Projetos\_Sistemas\BigFlux\docs\architecture\project-decisions\ADR-0004-formal-approval-gates.md`. O fluxo cria um namespace por `project_id`, registra apenas referências, injeta valores no runtime do Easypanel e nunca coloca secrets em chat, Git, skills, SOUL.md, handoffs ou logs.
 A ordem operacional é:
 
 ```text

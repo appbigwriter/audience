@@ -1,0 +1,62 @@
+[
+  {
+    "file": "HF-01-protein-evidence-after-40.md",
+    "bytes": 6097,
+    "sha256": "5e00dff1a20b0b6c45e8f4999bafb111b0daa8660c9cbd4205b31dee2a062871"
+  },
+  {
+    "file": "HF-02-reading-a-creatine-listing-after-40.md",
+    "bytes": 6461,
+    "sha256": "135ed1ac8cd52067b3d34d2a0feaf432b04e4fc3a8ffb7f1114180ae5f061a82"
+  },
+  {
+    "file": "HF-03-protein-powder-labels.md",
+    "bytes": 6238,
+    "sha256": "893675533ad6c6c7d1e907dbb8e54052ddbd425b91378bead6550e6f6dfc6c0e"
+  },
+  {
+    "file": "HF-04-comparing-creatine-listings-without-ranking.md",
+    "bytes": 6652,
+    "sha256": "a615bf3c5ed478b6f41888dd6eca6c67a7942dcd96c1762f87b4885c917a7615"
+  },
+  {
+    "file": "RW-01-foam-roller-features-and-questions.md",
+    "bytes": 5874,
+    "sha256": "1721c95d235c5c2bfe48258c1dba54a393fc00fd0305f970b1b4f23a014a4cb5"
+  },
+  {
+    "file": "RW-02-movement-sleep-recovery.md",
+    "bytes": 6329,
+    "sha256": "a3ebc4c9f840a8b69e424d5454e8b3e91aa15c0322cb3ed5b998538ab465e308"
+  },
+  {
+    "file": "RW-03-comparing-foam-roller-listings.md",
+    "bytes": 6210,
+    "sha256": "e8ec12cc7f10ea889a61438a3ffbe3af45360308b6a2bdb870e014892ae48f74"
+  },
+  {
+    "file": "RW-04-recovery-basics.md",
+    "bytes": 6444,
+    "sha256": "afb1489e6fdd0c934dc5ba70095dea3a9b18623ae8cf77749ca1ba6cab234d38"
+  },
+  {
+    "file": "SB-01-retinol-label-reading-after-40.md",
+    "bytes": 6089,
+    "sha256": "783bdc345fac60b715e30b9d3d09b208c206ea2a58d431488939f8db114e0926"
+  },
+  {
+    "file": "SB-02-simple-skincare-routine-without-product.md",
+    "bytes": 6065,
+    "sha256": "82f45327a2ff8261afdd77e16a9ad20aa679538a057f7f6acaa26dd3051cfc08"
+  },
+  {
+    "file": "SB-03-comparing-retinol-moisturizer-listings.md",
+    "bytes": 6472,
+    "sha256": "6a76608abe233ce08cd4827a8aaf337b3c3ee169f5287f70fcd89d7b4d5dd5f7"
+  },
+  {
+    "file": "SB-04-skincare-trends-after-40.md",
+    "bytes": 6323,
+    "sha256": "0bb265860c893a5c4752cc0633b525fd9db807256f64b435ef84eb12758add7a"
+  }
+]

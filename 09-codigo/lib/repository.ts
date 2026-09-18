@@ -1,15 +1,15 @@
-import type { BlogInput, BlogRepository, DailyJob } from './index'
+import type { BlogInput, BlogRepository, DailyJob, EditorialConfigRecord, PersonaBindingRecord } from './index'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, isAbsolute, resolve } from 'node:path'
 
-type State = { blogs: Record<string, BlogInput>; agents: Record<string, { profileId: string; status: string }>; handoffs: Array<{ blogId: string; name: string; receipt: string }>; jobs: DailyJob[]; events: Array<{ blogId: string; agent: string; action: string; artifact?: string }> }
-const emptyState = (): State => ({ blogs: {}, agents: {}, handoffs: [], jobs: [], events: [] })
+type State = { blogs: Record<string, BlogInput>; agents: Record<string, { profileId: string; status: string }>; handoffs: Array<{ blogId: string; name: string; receipt: string }>; jobs: DailyJob[]; events: Array<{ blogId: string; agent: string; action: string; artifact?: string }>; personaBindings: PersonaBindingRecord[]; editorialConfigs: EditorialConfigRecord[] }
+const emptyState = (): State => ({ blogs: {}, agents: {}, handoffs: [], jobs: [], events: [], personaBindings: [], editorialConfigs: [] })
 
 export class JsonRepository implements BlogRepository {
   private state: State
   private readonly path: string
   constructor(path = '.data/fbr-blogs.json') { this.path = isAbsolute(path) ? path : resolve(process.cwd(), path); this.state = this.load() }
-  private load(): State { try { const parsed = JSON.parse(readFileSync(this.path, 'utf8')) as Partial<State>; return { ...emptyState(), ...parsed, events: parsed.events || [] } } catch { return emptyState() } }
+  private load(): State { try { const parsed = JSON.parse(readFileSync(this.path, 'utf8')) as Partial<State>; return { ...emptyState(), ...parsed, events: parsed.events || [], personaBindings: parsed.personaBindings || [], editorialConfigs: parsed.editorialConfigs || [] } } catch { return emptyState() } }
   private persist() { mkdirSync(dirname(this.path), { recursive: true }); writeFileSync(this.path, JSON.stringify(this.state, null, 2), 'utf8') }
   saveBlog(input: BlogInput): string { const existing = this.findBlogBySlug(input.slug); if (existing) return existing.id; const id = crypto.randomUUID(); this.state.blogs[id] = input; this.persist(); return id }
   hasBlog(slug: string) { return Boolean(this.findBlogBySlug(slug)) }
@@ -19,6 +19,9 @@ export class JsonRepository implements BlogRepository {
   saveJobs(jobs: DailyJob[]) { this.state.jobs.push(...jobs); this.persist() }
   saveEvent(blogId: string, agent: string, action: string, artifact?: string) { this.state.events.push({ blogId, agent, action, artifact }); this.persist() }
   getBlog(id: string) { return this.state.blogs[id] }
+  findPersonaBinding(key: string) { return this.state.personaBindings.find(x => x.input.idempotencyKey === key || x.input.eventId === key) }
+  savePersonaBinding(binding: PersonaBindingRecord) { if (!this.findPersonaBinding(binding.input.idempotencyKey)) { this.state.personaBindings.push(binding); this.persist() } }
+  saveEditorialConfig(config: EditorialConfigRecord) { if (!this.state.editorialConfigs.some(x => x.blogId === config.blogId)) { this.state.editorialConfigs.push(config); this.persist() } }
   countJobs(blogId: string) { return this.state.jobs.filter(job => job.blogId === blogId).length }
 }
 

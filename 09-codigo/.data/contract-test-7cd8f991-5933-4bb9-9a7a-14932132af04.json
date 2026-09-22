@@ -1,0 +1,233 @@
+{
+  "blogs": {
+    "0802f801-f18d-4cda-98a6-9b0ad77127d0": {
+      "name": "Cinema com Evidência",
+      "slug": "cinema_com_evidencia",
+      "niche": "cinema",
+      "language": "pt",
+      "voice": "clear",
+      "domain": "cinema-com-evidencia.fbr.news"
+    }
+  },
+  "agents": {
+    "0802f801-f18d-4cda-98a6-9b0ad77127d0": {
+      "profileId": "hermes-manager-61d04c6d-0acf-43e0-9558-22696381d20b",
+      "status": "validated"
+    }
+  },
+  "handoffs": [
+    {
+      "blogId": "0802f801-f18d-4cda-98a6-9b0ad77127d0",
+      "name": "developer-doc",
+      "receipt": "local-receipt:727ef6c6-ae11-49dc-937d-01807c81903b"
+    },
+    {
+      "blogId": "0802f801-f18d-4cda-98a6-9b0ad77127d0",
+      "name": "frontend-adsense-handoff",
+      "receipt": "local-receipt:b04bf219-9dce-4d07-8f65-cf0af0a9b7e7"
+    },
+    {
+      "blogId": "0802f801-f18d-4cda-98a6-9b0ad77127d0",
+      "name": "bigwriter-handoff",
+      "receipt": "local-receipt:cec75f57-20a8-4a40-a69b-1c0e407328b7"
+    }
+  ],
+  "jobs": [],
+  "events": [
+    {
+      "blogId": "0802f801-f18d-4cda-98a6-9b0ad77127d0",
+      "agent": "fbr-blogs",
+      "action": "blog.persona_bound",
+      "artifact": "fixture-persona-version-3"
+    }
+  ],
+  "personaBindings": [
+    {
+      "id": "a3a97584-01f3-4e1c-9b20-33061bc082a5",
+      "blogId": "0802f801-f18d-4cda-98a6-9b0ad77127d0",
+      "input": {
+        "contractVersion": 1,
+        "idempotencyKey": "fixture-persona-approved-1",
+        "eventId": "fixture-persona-approved-1",
+        "tenantId": "fixture-tenant-1",
+        "fluxProjectId": "fixture-flux-project-1",
+        "correlationId": "fixture-corr-1",
+        "causationId": null,
+        "sourceEventId": "fixture-persona-approved-1",
+        "authorityProjectId": "fixture-authority-project-1",
+        "personaId": "fixture-persona-1",
+        "personaVersionId": "fixture-persona-version-3",
+        "personaVersion": 3,
+        "personaStatus": "approved",
+        "personaSnapshotHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "personaApprovalId": "fixture-approval-pack-1",
+        "approvedBy": "sergio",
+        "approvedAt": "2026-09-18T11:30:00.000Z",
+        "approvalScope": "persona_version",
+        "approvedVersions": [
+          "fixture-persona-version-3"
+        ],
+        "blog": {
+          "name": "Cinema com Evidência",
+          "slug": "cinema_com_evidencia",
+          "niche": "cinema",
+          "language": "pt",
+          "voice": "clear",
+          "domain": "cinema-com-evidencia.fbr.news"
+        },
+        "snapshot": {
+          "snapshotHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "personaName": "Cinema com Evidência",
+          "bio": "Persona aprovada dedicada a cinema com evidência.",
+          "positioning": "Análise de cinema baseada em evidência",
+          "centralPromise": "Críticas úteis sem spoiler desnecessário",
+          "audience": [
+            "adultos interessados em cinema"
+          ],
+          "voice": "clear",
+          "vocabulary": [
+            "filme",
+            "cinema"
+          ],
+          "editorialPillars": [
+            "críticas com evidência"
+          ],
+          "priorityTopics": [
+            "cinema"
+          ],
+          "prohibitedTopics": [
+            "pirataria"
+          ],
+          "guardrails": [
+            "sem claims não suportados"
+          ],
+          "qualityCriteria": [
+            "fontes verificáveis"
+          ],
+          "reviewCriteria": [
+            "revisão humana antes de publicar"
+          ],
+          "blogChannelPlan": {
+            "objective": "informar com evidência",
+            "audience": [
+              "adultos interessados em cinema"
+            ],
+            "formats": [
+              "guia"
+            ],
+            "cadence": "3/semana",
+            "pillars": [
+              "críticas com evidência"
+            ],
+            "disclosure": "transparência sobre uso de IA",
+            "constraints": [],
+            "plan": "editorial"
+          },
+          "socialChannelPlan": {
+            "versionId": "fixture-social-plan-1",
+            "status": "planned",
+            "objective": "distribuir análises",
+            "audience": [
+              "adultos interessados em cinema"
+            ],
+            "formats": [
+              "post"
+            ],
+            "cadence": "semanal",
+            "pillars": [
+              "críticas com evidência"
+            ],
+            "disclosure": "transparência sobre uso de IA",
+            "constraints": []
+          },
+          "youtubeChannelPlan": {
+            "versionId": "fixture-youtube-plan-1",
+            "status": "planned",
+            "objective": "vídeo-análise",
+            "audience": [
+              "adultos interessados em cinema"
+            ],
+            "formats": [
+              "vídeo"
+            ],
+            "cadence": "mensal",
+            "pillars": [
+              "críticas com evidência"
+            ],
+            "disclosure": "transparência sobre uso de IA",
+            "constraints": []
+          }
+        }
+      },
+      "status": "bound",
+      "boundAt": "2026-09-22T03:43:58.367Z"
+    }
+  ],
+  "editorialConfigs": [
+    {
+      "blogId": "0802f801-f18d-4cda-98a6-9b0ad77127d0",
+      "personaId": "fixture-persona-1",
+      "personaVersionId": "fixture-persona-version-3",
+      "snapshotHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "blogChannelPlan": {
+        "objective": "informar com evidência",
+        "audience": [
+          "adultos interessados em cinema"
+        ],
+        "formats": [
+          "guia"
+        ],
+        "cadence": "3/semana",
+        "pillars": [
+          "críticas com evidência"
+        ],
+        "disclosure": "transparência sobre uso de IA",
+        "constraints": [],
+        "plan": "editorial"
+      },
+      "pillars": [
+        "críticas com evidência"
+      ],
+      "priorityTopics": [
+        "cinema"
+      ],
+      "prohibitedTopics": [
+        "pirataria"
+      ],
+      "socialChannelPlan": {
+        "versionId": "fixture-social-plan-1",
+        "status": "configured",
+        "objective": "distribuir análises",
+        "audience": [
+          "adultos interessados em cinema"
+        ],
+        "formats": [
+          "post"
+        ],
+        "cadence": "semanal",
+        "pillars": [
+          "críticas com evidência"
+        ],
+        "disclosure": "transparência sobre uso de IA",
+        "constraints": []
+      },
+      "youtubeChannelPlan": {
+        "versionId": "fixture-youtube-plan-1",
+        "status": "configured",
+        "objective": "vídeo-análise",
+        "audience": [
+          "adultos interessados em cinema"
+        ],
+        "formats": [
+          "vídeo"
+        ],
+        "cadence": "mensal",
+        "pillars": [
+          "críticas com evidência"
+        ],
+        "disclosure": "transparência sobre uso de IA",
+        "constraints": []
+      }
+    }
+  ]
+}

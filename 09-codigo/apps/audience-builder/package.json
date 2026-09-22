@@ -1,0 +1,6 @@
+{
+  "name": "@fbr-audience-builder/app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Track B — superfícies de produto do Audience Builder: readiness S0/S1, dashboards, descoberta de canais e approval package. Lógica local testável; sem persistência própria."
+}

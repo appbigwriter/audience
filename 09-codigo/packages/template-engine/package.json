@@ -1,0 +1,6 @@
+{
+  "name": "@fbr-audience-builder/template-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Track B — registry de templates versionados, renderizador determinístico de páginas editoriais e catálogo de componentes de nicho."
+}

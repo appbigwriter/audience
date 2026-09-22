@@ -54,11 +54,39 @@ Há duas divergências independentes:
 - O `09-codigo/Dockerfile` atual força `ENV PORT=3000` e `EXPOSE 3000`.
 - O `package.json` não define uma porta própria; o processo Next.js usa a variável `PORT`/default.
 
-**Conclusão:** `3400` é a porta interna padronizada/correta para o contrato do Control Tower, mas o código atualmente publicado está configurado para `3000`. Se o EasyPanel estiver configurado para encaminhar `3400`, essa divergência explica diretamente o `502 Bad Gateway`.
+**Conclusão corrigida:** para o código atual, `PORT=3000` é coerente com o `Dockerfile`, que força `ENV PORT=3000` e `EXPOSE 3000`. `3400` é o default do contrato central do Control Tower, mas não é correto enquanto a imagem atual continuar escutando/expondo `3000`.
 
-A correção deve alinhar Dockerfile/provider para uma única porta. A recomendação é manter `3400`, porque é o contrato central já usado pelo Control Tower, alterando o Dockerfile para `ENV PORT=3400` e `EXPOSE 3400`, e depois fazer deploy/readback do mesmo commit. Não basta mudar a porta no painel sem reconciliar o Dockerfile, nem mudar somente o Dockerfile sem confirmar o target EasyPanel.
+Há duas configurações válidas, que precisam ser aplicadas de forma consistente:
 
-## 6. Próxima ação segura
+1. **Manter o código atual:** Control Tower/EasyPanel `PORT=3000` + porta interna `3000`.
+2. **Adotar o padrão central:** alterar o Dockerfile para `PORT=3400`/`EXPOSE 3400`, commit/deploy correspondente e então configurar/readback `3400` no provider.
+
+Não se deve alterar somente o Environment para `3400`: isso pode causar 502 se o container continuar ouvindo em `3000`. Também não se deve alterar somente o Dockerfile sem confirmar a porta do serviço no EasyPanel.
+
+O `502` continua podendo ser explicado por mismatch de porta, serviço errado, processo parado ou entrypoint legado; o readback autenticado do provider é necessário para distinguir as causas.
+
+## 7. Correção local aplicada
+
+- `09-codigo/app/page.tsx` agora é a superfície raiz do Audience Builder, sem formulário/pipeline visual do FBR Blogs legado.
+- `09-codigo/app/layout.tsx` agora usa metadata do Audience Builder.
+- `09-codigo/app/health/route.ts` criado com resposta JSON de readiness, sem afirmar integração externa.
+- `09-codigo/package.json` e `package-lock.json` agora usam `audience-builder`.
+- `PORT=3000` foi mantido, alinhado ao Dockerfile atual e ao Environment informado.
+
+## 8. Verificação local pós-correção
+
+- `npm test`: **27 arquivos / 287 testes PASS**.
+- `npm run typecheck`: **PASS**.
+- `npm run lint`: **PASS**.
+- `npm run build`: **PASS**.
+- Smoke com `next start --port 3099`: `GET /health` retornou HTTP `200` e `service=audience-builder`; `GET /` apresentou marcadores `Audience Builder` e nenhum marcador `FBR Blogs`.
+- Processo local encerrado após o smoke test.
+
+## 9. Limite atual
+
+A correção é local e ainda não foi publicada no EasyPanel. É necessário deploy/readback autenticado do serviço `audience`, confirmando repository, commit, porta `3000`, command, processo running, domínio e `/health` público.
+
+## 10. Próxima ação segura
 
 Sergio/infra deve abrir sessão administrativa no host exato:
 

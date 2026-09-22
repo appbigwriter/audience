@@ -2,8 +2,8 @@ import { ReactNode } from 'react'
 import './styles.css'
 
 export const metadata = {
-  title: 'FBR Blogs · Editorial Control Room',
-  description: 'Provisionamento e gestão de blogs temáticos da FBR Agency.',
+  title: 'Audience Builder',
+  description: 'Criação e operação de propriedades de audiência orientadas por Personas aprovadas.',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

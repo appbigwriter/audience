@@ -1,16 +1,11 @@
--- =============================================================================
--- Schema Oficial Canônico: custom_audience
+-- Migration: 000_custom_audience_full.sql
+-- Escopo: Criação integral do schema custom_audience, governança Control Tower e tabelas de domínio do Audience Builder
 -- Project ID: 153d40a6-5823-4029-add3-b52604cd3b71
--- Target: vps2 | Namespace: fbr/custom/153d40a6-5823-4029-add3-b52604cd3b71
--- =============================================================================
 
 CREATE SCHEMA IF NOT EXISTS custom_audience;
 SET search_path = custom_audience, public;
 
--- =============================================================================
--- 1. TABELAS DE GOVERNANÇA EXIGIDAS PELO CONTROL TOWER (custom_audience)
--- =============================================================================
-
+-- 1. TABELAS DE GOVERNANÇA CONTROL TOWER
 CREATE TABLE IF NOT EXISTS custom_audience.entities (
   id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   project_id    uuid NOT NULL,
@@ -81,11 +76,7 @@ CREATE TABLE IF NOT EXISTS custom_audience.events (
   occurred_at     timestamptz NOT NULL DEFAULT now()
 );
 
--- =============================================================================
--- 2. TABELAS DE DOMÍNIO DO AUDIENCE BUILDER
--- =============================================================================
-
--- Bindings de Persona imutáveis
+-- 2. TABELAS DE DOMÍNIO AUDIENCE BUILDER
 CREATE TABLE IF NOT EXISTS custom_audience.audience_persona_bindings (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL,
@@ -105,7 +96,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_persona_bindings (
   UNIQUE (audience_project_id, content_hash)
 );
 
--- Projetos Audience
 CREATE TABLE IF NOT EXISTS custom_audience.audience_projects (
   id                    uuid PRIMARY KEY,
   tenant_id             text NOT NULL,
@@ -126,7 +116,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_projects (
   UNIQUE (tenant_id, owner_id, slug)
 );
 
--- Transições de Estado
 CREATE TABLE IF NOT EXISTS custom_audience.audience_project_transitions (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -137,7 +126,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_project_transitions (
   occurred_at           timestamptz NOT NULL DEFAULT now()
 );
 
--- Hipóteses de Nicho Potenciais
 CREATE TABLE IF NOT EXISTS custom_audience.audience_potential_niches (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -157,7 +145,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_potential_niches (
   UNIQUE (audience_project_id, niche_id)
 );
 
--- Manifesto do Projeto
 CREATE TABLE IF NOT EXISTS custom_audience.audience_manifests (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -173,7 +160,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_manifests (
   UNIQUE (audience_project_id, content_hash)
 );
 
--- Theme Manifests
 CREATE TABLE IF NOT EXISTS custom_audience.audience_theme_manifests (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -185,7 +171,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_theme_manifests (
   UNIQUE (audience_project_id, theme_id, version)
 );
 
--- Perfis Editoriais
 CREATE TABLE IF NOT EXISTS custom_audience.audience_editorial_profiles (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -203,7 +188,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_editorial_profiles (
   UNIQUE (audience_project_id, persona_version_id)
 );
 
--- Calendário Editorial
 CREATE TABLE IF NOT EXISTS custom_audience.audience_editorial_calendar (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -218,7 +202,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_editorial_calendar (
   UNIQUE (audience_project_id, topic, due_at)
 );
 
--- Briefings de Pesquisa
 CREATE TABLE IF NOT EXISTS custom_audience.audience_research_briefs (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -231,7 +214,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_research_briefs (
   created_at            timestamptz NOT NULL DEFAULT now()
 );
 
--- Fontes e Citações
 CREATE TABLE IF NOT EXISTS custom_audience.audience_sources (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -244,7 +226,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_sources (
   limitation            text
 );
 
--- Drafts de Artigos
 CREATE TABLE IF NOT EXISTS custom_audience.audience_article_drafts (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -264,14 +245,12 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_article_drafts (
   UNIQUE (audience_project_id, slug, version)
 );
 
--- Relação Draft ↔ Fontes
 CREATE TABLE IF NOT EXISTS custom_audience.audience_article_sources (
   draft_id              uuid NOT NULL REFERENCES custom_audience.audience_article_drafts(id) ON DELETE CASCADE,
   source_id             uuid NOT NULL REFERENCES custom_audience.audience_sources(id) ON DELETE CASCADE,
   PRIMARY KEY (draft_id, source_id)
 );
 
--- Descoberta de Canais Sociais
 CREATE TABLE IF NOT EXISTS custom_audience.audience_channel_capabilities (
   id                    uuid PRIMARY KEY,
   channel               text NOT NULL,
@@ -342,7 +321,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_social_approval_packages (
   created_at            timestamptz NOT NULL DEFAULT now()
 );
 
--- Inventário de Anúncios e Monetização
 CREATE TABLE IF NOT EXISTS custom_audience.audience_ad_inventory (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -356,7 +334,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_ad_inventory (
   created_at            timestamptz NOT NULL DEFAULT now()
 );
 
--- Eventos de Métricas e Analytics
 CREATE TABLE IF NOT EXISTS custom_audience.audience_analytics_events (
   id                    uuid PRIMARY KEY,
   audience_project_id   uuid NOT NULL REFERENCES custom_audience.audience_projects(id) ON DELETE CASCADE,
@@ -368,7 +345,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_analytics_events (
   occurred_at           timestamptz NOT NULL DEFAULT now()
 );
 
--- Inbox / Outbox e Jobs Agency Flux
 CREATE TABLE IF NOT EXISTS custom_audience.audience_inbox_events (
   event_id              text PRIMARY KEY,
   consumer              text NOT NULL,
@@ -404,7 +380,6 @@ CREATE TABLE IF NOT EXISTS custom_audience.audience_flux_jobs (
   updated_at            timestamptz NOT NULL DEFAULT now()
 );
 
--- Índices de Performance
 CREATE INDEX IF NOT EXISTS idx_projects_tenant ON custom_audience.audience_projects(tenant_id);
 CREATE INDEX IF NOT EXISTS idx_projects_status ON custom_audience.audience_projects(status);
 CREATE INDEX IF NOT EXISTS idx_calendar_due ON custom_audience.audience_editorial_calendar(audience_project_id, due_at);
